@@ -5,3 +5,4 @@ npm install @hotwired/turbo-rails @hotwired/stimulus
 npm build
 npm install -g esbuild
 bin/rails assets:precompile
+
