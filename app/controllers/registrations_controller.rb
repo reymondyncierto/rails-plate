@@ -8,7 +8,7 @@ class RegistrationsController < ApplicationController
 
     # If the user is saved successfully than respond with a success message
     if @user.save
-      # session[:user_id] = @user.id
+      session[:user_id] = @user.id
       redirect_to root_path, notice: "Successfully created account"
     else
       # If the user is not saved than show the registration form with an error message
