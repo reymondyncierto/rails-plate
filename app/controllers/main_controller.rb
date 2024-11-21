@@ -1,6 +1,5 @@
 class MainController < ApplicationController
   def index
-    # flash[:notice] = "Hello, Rails!"
-    # flash[:alert] = "Goodbye, Rails!"
+    redirect_to calendar_monthly_path(date: Date.today)
   end
 end

@@ -1,0 +1,42 @@
+<h1>Weekly View for Week of <%= @date.beginning_of_week.strftime("%A, %B %d, %Y") %></h1>
+
+<!-- Navigation Controls -->
+<div class="d-flex justify-content-between mb-3">
+  <div>
+    <%= link_to 'Prev', calendar_weekly_path(date: @prev_week), class: 'btn btn-outline-primary' %>
+    <%= link_to 'Today', calendar_weekly_path(date: Date.today), class: 'btn btn-outline-success' %>
+    <%= link_to 'Next', calendar_weekly_path(date: @next_week), class: 'btn btn-outline-primary' %>
+  </div>
+
+  <!-- Links to switch between views, right-aligned -->
+  <div class="ml-auto">
+    <%= link_to 'Switch to Daily View', calendar_daily_path(date: @date), class: 'btn btn-outline-secondary' %>
+    <%= link_to 'Switch to Monthly View', calendar_monthly_path(date: @date), class: 'btn btn-outline-secondary' %>
+  </div>
+</div>
+
+<div class="row">
+  <% (0..6).each do |i| %>
+    <% current_day = @date.beginning_of_week + i.days %>
+    <div class="col-1 text-center p-3">
+      <div class="border rounded p-2">
+        <h6 class="font-weight-bold"><%= current_day.strftime("%A") %></h6>
+        <p><%= current_day.day %></p>
+
+        <%
+=begin%>
+ <% current_day.events.each do |event| %>
+          <div class="small text-muted">
+            <%= event.start_time.strftime("%I:%M %p") %> - <%= event.title %>
+          </div>
+        <% end %>
+
+        <% if current_day.events.empty? %>
+          <small>No events</small>
+        <% end %>
+<%
+=end%>
+      </div>
+    </div>
+  <% end %>
+</div>
