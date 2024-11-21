@@ -6,3 +6,5 @@ npm build
 npm install -g esbuild
 bin/rails assets:precompile
 
+- every time you change the schema in the migration, you need to run the following commands:
+// rails db:migrate:redo
