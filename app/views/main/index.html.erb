@@ -1,9 +1,64 @@
-<h1>User Role Check</h1>
+
 
 <% if Current.user.admin? %>
-  <p>You are an <strong>Admin</strong>.</p>
+  <h1>All Reservations</h1>
+
+  <!-- Render Monthly Calendar for Admin -->
+  <table class="table table-bordered table-striped">
+    <thead class="thead-light">
+      <tr>
+        <% Date::DAYNAMES.each do |day| %>
+          <th class="text-center text-uppercase font-weight-bold"><%= day %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% start_date = @date.beginning_of_month.beginning_of_week(:sunday) %>
+      <% end_date = @date.end_of_month.end_of_week(:sunday) %>
+
+      <% (start_date..end_date).each_slice(7) do |week| %>
+        <tr>
+          <% week.each do |day| %>
+            <td class="text-center align-middle
+                      <%= 'table-primary' if day == Date.today %> <!-- Highlight today's date -->
+                      <%= 'text-muted' if day.month != @date.month %> <!-- Show previous month dates in muted color -->
+                      <%= 'bg-light' if day.sunday? %>"> <!-- Highlight Sundays -->
+
+              <!-- Display the date link -->
+              <%= link_to day.day, calendar_monthly_path(date: day), class: "day-link" %>
+
+              <!-- Render all reservations for this day for Admin -->
+              <div class="mt-2">
+                <% # Get reservations for this specific day, assuming created_at is used %>
+                <% reservations_for_day = Reservation.where(created_at: day.beginning_of_day..day.end_of_day) %>
+
+                <% if reservations_for_day.any? %>
+                  <% reservations_for_day.each do |reservation| %>
+                    <div class="card mt-2">
+                      <div class="card-body p-2">
+                        <h6 class="card-title mb-1">
+                          <strong>Table <%= reservation.table.id %></strong> - <%= reservation.guest_count %> guests
+                        </h6>
+                        <p class="card-text mb-1 small">
+                          <%= reservation.time_slot.start_time.strftime("%I:%M %p") %> to <%= reservation.time_slot.end_time.strftime("%I:%M %p") %><br>
+                          Status: <%= reservation.status.capitalize %>
+                        </p>
+                      </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <span class="text-muted small">No Reservations for this day.</span>
+                <% end %>
+              </div>
+
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
 <% elsif Current.user.user? %>
-  <p>You are a regular <strong>User</strong>.</p>
   <h1>Make a Reservation</h1>
 
   <!-- Navigation Controls for the Calendar -->
@@ -21,7 +76,7 @@
     </div>
   </div>
 
-  <!-- Render Monthly Calendar -->
+  <!-- Render Monthly Calendar for User -->
   <table class="table table-bordered table-striped">
     <thead class="thead-light">
       <tr>
@@ -45,12 +100,12 @@
               <!-- Display the date link -->
               <%= link_to day.day, new_reservation_path(date: day), class: "day-link" %>
 
-              <!-- Render Time Slots for this day -->
+              <!-- Render Time Slots for this day for User -->
               <div class="mt-2">
                 <% time_slots_for_day(day).each do |time_slot| %>
                   <% # Check how many reservations have already been made for this time slot %>
                   <% reservations_for_slot = time_slot.reservations.count %>
-                  <% available_tables = time_slot.tables.count - reservations_for_slot %>
+                  <% available_tables = time_slot.max_tables - reservations_for_slot %>
 
                   <div class="card mt-2
                               <%= 'bg-danger' if available_tables == 0 %> <!-- Red if fully booked -->
@@ -60,6 +115,7 @@
                         <%= time_slot.start_time.strftime("%I:%M %p") %> - <%= time_slot.end_time.strftime("%I:%M %p") %>
                       </h6>
                       <p class="card-text mb-1 small">
+                        Max Tables: <%= time_slot.max_tables %><br>
                         Available: <%= available_tables %>
                       </p>
                       <% if available_tables > 0 %>
