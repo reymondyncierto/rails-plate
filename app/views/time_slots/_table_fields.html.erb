@@ -1,0 +1,6 @@
+<div class="mb-3">
+  <%= f.label :capacity, "Table Capacity" %>
+  <%= f.number_field :capacity, class: 'form-control' %>
+  <%= f.hidden_field :_destroy %>
+  <%= link_to 'Remove Table', '#', class: 'remove_fields btn btn-danger' %>
+</div>

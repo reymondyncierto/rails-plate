@@ -1,0 +1,92 @@
+<h1 class="text-center my-4">Make a Reservation</h1>
+
+<%= form_for @reservation do |form| %>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+
+      <!-- Email Field -->
+        <div class="form-group">
+          <%= form.label :email, "Your Email", class: 'font-weight-bold' %>
+          <%= form.email_field :email, class: 'form-control', value: Current.user.email %>
+        </div>
+
+        <!-- Number of People Field -->
+        <div class="form-group">
+          <%= form.label :guest_count, "Number of People", class: 'font-weight-bold' %>
+          <%= form.number_field :guest_count, class: 'form-control', min: 1, required: true, placeholder: 'Enter number of guests' %>
+        </div>
+
+        <!-- Hidden Time Slot ID Field -->
+        <div class="form-group">
+          <%= form.hidden_field :time_slot_id, value: @time_slot.id %>  <!-- Pass the time_slot_id -->
+        </div>
+
+        <!-- Table Selection Dropdown -->
+        <div class="form-group">
+          <%= form.label :table_id, "Select a Table", class: 'font-weight-bold' %>
+          <%= form.select :table_id,
+              options_from_collection_for_select(@tables, :id,
+                # Create a custom display for each table
+                ->(table) {
+                  "Table ##{table.id} - Capacity: #{table.capacity} "
+                },
+                { data: { capacity: :capacity } }),
+              prompt: "Choose a Table", class: 'form-control'
+          %>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="form-group text-center">
+          <%= form.submit "Reserve", class: 'btn btn-success btn-lg' %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  const guestCountInput = document.querySelector('input[name="reservation[guest_count]"]');
+  const tableSelect = document.querySelector('select[name="reservation[table_id]"]');
+  const reserveButton = document.querySelector('input[type="submit"][value="Reserve"]');
+  const form = document.querySelector('form');
+
+  // Function to update the button state based on guest count and table capacity
+  function updateReserveButtonState() {
+    const guestCount = parseInt(guestCountInput.value, 10);
+    const selectedTable = tableSelect.selectedOptions[0];
+
+    if (selectedTable && selectedTable.dataset.capacity) {
+      // Enable/disable the button based on guest count and table capacity
+      if (guestCount <= selectedTable.dataset.capacity && guestCount > 0) {
+        reserveButton.disabled = false;
+      } else {
+        reserveButton.disabled = true;
+      }
+    } else {
+      reserveButton.disabled = true; // Disable button if no table is selected
+    }
+  }
+
+  // Prevent form submission if guest count exceeds table capacity
+  form.addEventListener('submit', function(event) {
+    const guestCount = parseInt(guestCountInput.value, 10);
+    const selectedTable = tableSelect.selectedOptions[0];
+
+    if (selectedTable && guestCount > selectedTable.dataset.capacity) {
+      event.preventDefault();  // Prevent form submission
+      alert("The number of guests exceeds the selected table's capacity.");
+    }
+  });
+
+  // Event listeners to trigger validation when user changes input
+  guestCountInput.addEventListener('input', updateReserveButtonState);
+  tableSelect.addEventListener('change', updateReserveButtonState);
+
+  // Initial check to set the correct button state when the page loads
+  updateReserveButtonState();
+});
+
+</script>

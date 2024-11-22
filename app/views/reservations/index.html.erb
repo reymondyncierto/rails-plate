@@ -1,0 +1,57 @@
+<h1 class="text-center my-4">Your Reservations</h1>
+
+<% if @reservations.present? %>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-light">
+        <tr>
+          <th class="text-center">Table</th>
+          <th class="text-center">Guest Count</th>
+          <th class="text-center">Time Slot</th>
+          <th class="text-center">Date</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Actions</th> <!-- New Actions column for Cancel -->
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr>
+            <td class="text-center">
+              <strong>Table <%= reservation.table.id %></strong><br>
+              <small>Capacity: <%= reservation.table.capacity %></small>
+            </td>
+            <td class="text-center"><%= reservation.guest_count %></td>
+            <td class="text-center">
+              <%= reservation.time_slot.start_time.strftime("%I:%M %p") %>
+              <strong>to</strong>
+              <%= reservation.time_slot.end_time.strftime("%I:%M %p") %>
+            </td>
+            <td class="text-center"><%= reservation.created_at.strftime("%B %d, %Y") %></td>
+            <!-- Display the status -->
+            <td class="text-center"><%= reservation.status %></td>
+            <td class="text-center">
+              <% if reservation.status == 'cancelled' %>
+                <span class="text-muted">Cannot Cancel</span>
+              <% elsif reservation.time_slot.available? && reservation.created_at > 1.hour.ago %>
+                <!-- If the reservation is confirmed and was made within the last hour, show the cancel button -->
+                <%= button_to 'Cancel', cancel_reservation_path(reservation), method: :delete, class: 'btn btn-danger btn-sm' %>
+              <% else %>
+                <span class="text-muted">Cannot Cancel</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="alert alert-info text-center">
+    <strong>No reservations yet.</strong><br>
+    You have no reservations at the moment.
+  </div>
+<% end %>
+
+<!-- Optionally add a link back to the reservation form -->
+<div class="text-center mt-4">
+  <%= link_to 'Make a New Reservation', root_path, class: 'btn btn-primary btn-lg' %>
+</div>

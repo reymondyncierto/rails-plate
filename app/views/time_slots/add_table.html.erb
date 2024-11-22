@@ -1,0 +1,29 @@
+<h1 class="mb-4">Add Table to Time Slot</h1>
+
+<!-- Display the Time Slot Details -->
+<div class="mb-3">
+  <h3>Time Slot Details</h3>
+  <p><strong>Start Time:</strong> <%= @time_slot.start_time.strftime("%H:%M") %></p>
+  <p><strong>End Time:</strong> <%= @time_slot.end_time.strftime("%H:%M") %></p>
+  <p><strong>Max Tables:</strong> <%= @time_slot.max_tables %></p>
+  <p><strong>Current Tables:</strong></p>
+  <ul>
+    <% @time_slot.tables.each do |table| %>
+      <li>Table Capacity: <%= table.capacity %></li>
+    <% end %>
+  </ul>
+</div>
+
+<!-- Form for Adding a Single Table -->
+<%= form_with(model: [@time_slot, @table], url: add_table_time_slot_path(@time_slot), local: true) do |form| %>
+  <div class="mb-3">
+    <%= form.label :capacity, "Table Capacity", class: 'form-label' %>
+    <%= form.number_field :capacity, class: 'form-control' %>
+  </div>
+
+  <!-- Submit Button -->
+  <%= form.submit 'Add Table', class: 'btn btn-primary w-100 mt-3' %>
+<% end %>
+
+<!-- Back Button -->
+<%= link_to 'Back', manage_timeslots_path, class: 'btn btn-secondary mt-3' %>

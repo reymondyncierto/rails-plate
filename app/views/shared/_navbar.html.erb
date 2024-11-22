@@ -12,6 +12,20 @@
         <li class="nav-item">
           <%= link_to "About", about_path, class: "nav-link" %>
         </li>
+        <% if Current.user %>
+          <% if Current.user.admin? %>
+            <li class="nav-item">
+              <%= link_to 'Manage Reservations', reservations_path, class: 'nav-link' %>
+            </li>
+            <li class="nav-item">
+              <%= link_to 'Manage Timeslots', manage_timeslots_path, class: 'nav-link' %>
+            </li>
+          <% elsif Current.user.user? %>
+            <li class="nav-item">
+              <%= link_to 'View Reservations', reservations_path, class: 'nav-link' %>
+            </li>
+          <% end %>
+        <% end %>
       </ul>
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <% if Current.user %>

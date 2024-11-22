@@ -1,0 +1,27 @@
+<h1 class="mb-4"><%= action_name.capitalize %> Time Slot</h1>
+
+<%= form_with(model: @time_slot, local: true) do |form| %>
+  <!-- Start Time -->
+  <div class="mb-3">
+    <%= form.label :start_time, class: 'form-label' %>
+    <%= form.select :start_time, options_for_select((0..23).map { |hour| ["#{format('%02d', hour)}:00", "#{format('%02d', hour)}:00"] }, @time_slot.start_time.strftime('%H:%M')), { prompt: "Select Start Time" }, class: 'form-control' %>
+  </div>
+
+  <!-- End Time -->
+  <div class="mb-3">
+    <%= form.label :end_time, class: 'form-label' %>
+    <%= form.select :end_time, options_for_select((0..23).map { |hour| ["#{format('%02d', hour)}:00", "#{format('%02d', hour)}:00"] }, @time_slot.end_time.strftime('%H:%M')), { prompt: "Select End Time" }, class: 'form-control' %>
+  </div>
+
+  <!-- Max Tables -->
+  <div class="mb-3">
+    <%= form.label :max_tables, class: 'form-label' %>
+    <%= form.number_field :max_tables, class: 'form-control', id: 'max_tables' %>
+  </div>
+
+  <!-- Submit Button -->
+  <%= form.submit 'Update Time Slot', class: 'btn btn-primary w-100 mt-3' %>
+<% end %>
+
+<!-- Back Button -->
+<%= link_to 'Back', manage_timeslots_path, class: 'btn btn-secondary mt-3' %>

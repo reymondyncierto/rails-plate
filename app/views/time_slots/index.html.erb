@@ -1,0 +1,44 @@
+<h1 class="mb-4 text-center">Manage Time Slots</h1>
+
+<%= link_to 'Add Time Slot', new_time_slot_path, class: 'btn btn-success mb-3' %>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered table-hover text-center">
+    <thead class="thead-dark">
+      <tr>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Max Tables</th>
+        <th>Current Tables</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @time_slots.present? %>
+        <% @time_slots.each do |time_slot| %>
+          <tr>
+            <td><%= time_slot.date.strftime("%Y-%m-%d") %></td>
+            <td><%= time_slot.start_time.strftime("%H:%M") %></td>
+            <td><%= time_slot.end_time.strftime("%H:%M") %></td>
+            <td><%= time_slot.max_tables %></td>
+            <td><%= time_slot.tables.count %></td>
+            <td>
+              <div class="btn-group" role="group">
+                <% if time_slot.tables.count < time_slot.max_tables %>
+                  <%= link_to 'Add Table', add_table_time_slot_path(time_slot), class: 'btn btn-primary btn-sm mr-3' %> <!-- Added margin-right -->
+                <% end %>
+                <%= link_to 'Edit', edit_time_slot_path(time_slot), class: 'btn btn-warning btn-sm mr-3' %> <!-- Added margin-right -->
+                <%= button_to 'Delete', time_slot, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="5" class="text-center">No time slots found</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

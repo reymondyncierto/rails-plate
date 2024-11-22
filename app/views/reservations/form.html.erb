@@ -1,0 +1,30 @@
+<!-- app/views/reservations/new.html.erb -->
+
+<h1>Make a Reservation</h1>
+
+<%= form_for @reservation do |form| %>
+  <%
+=begin%>
+ <div class="form-group">
+    <%= form.label :name, "Your Name" %>
+    <%= form.text_field :name, class: 'form-control', required: true %>
+  </div>
+<%
+=end%>
+
+  <div class="form-group">
+    <%= form.label :guest_count, "Number of People" %>
+    <%= form.number_field :guest_count, class: 'form-control', min: 1, required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= form.hidden_field :time_slot_id, value: @time_slot.id %>
+    <%= form.hidden_field :reservation_date, value: params[:date] %> <!-- Store the selected date -->
+  </div>
+
+  <div class="form-group">
+    <%= form.submit "Reserve", class: 'btn btn-success' %>
+  </div>
+<% end %>
+
+<%= link_to 'Back to Calendar', calendar_monthly_path(date: params[:date]), class: 'btn btn-secondary' %>

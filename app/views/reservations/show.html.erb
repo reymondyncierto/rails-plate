@@ -1,0 +1,10 @@
+<h1><%= @time_slot.start_time.strftime("%H:%M") %> - <%= @time_slot.end_time.strftime("%H:%M") %></h1>
+
+<h3>Reservations</h3>
+<ul>
+  <% @time_slot.reservations.each do |reservation| %>
+    <li><%= reservation.user_name %> (Table: <%= reservation.table.capacity %> seats)</li>
+  <% end %>
+</ul>
+
+<%= link_to 'Make a Reservation', new_time_slot_reservation_path(@time_slot), class: 'btn btn-primary' %>
